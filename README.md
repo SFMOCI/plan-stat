@@ -1,0 +1,4 @@
+plan-stat
+=========
+
+Prototype application
