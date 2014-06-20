@@ -1,0 +1,18 @@
+body {
+	padding-top: 50px;
+}
+.starter-template {
+	padding: 40px 15px;
+	text-align: center;
+}
+
+#barChart {height: 400px; max-width: 600px;}
+
+.labels text {text-align: right;}
+.bar .labels text {fill: #333;}
+.bar rect {fill: #e6e6e6;}
+.axis {shape-rendering: crispEdges;}
+.x.axis line {stroke: #fff; fill: none;}
+.x.axis path {fill: none;}
+.x.axis text {fill: #333;}
+.xLabel {font-family: sans-serif; font-size: 9px;}
