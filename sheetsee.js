@@ -1488,7 +1488,7 @@ module.exports.d3BarChart = function(data, options) {
 	  .attr("y", y.rangeBand() / 2)
 	  .attr("dx", 12)
 	  .attr("dy", ".35em")
-	  .attr("text-anchor", "end")
+	  .attr("text-anchor", "start")
 	  .attr("index_value", function(d, i) { return "index-" + i })
 	  .text(function(d) { return format(d.units) })
 	  .attr("class", function(d, i) { return "value-" + "index-" + i })
@@ -25369,11 +25369,18 @@ module.exports.table = table
 function table(data, opts) {
   if (opts.templateID) {
     var templateID = opts.templateID
-  } else var templateID = opts.tableDiv.replace("#", "")
+    var tableDiv = opts.tableDiv
+  } else if (typeof opts == 'string') {
+    var templateID = opts.replace("#", "")
+    var tableDiv = opts
+  } else {
+    var templateID = opts.tableDiv.replace("#", "")
+    var tableDiv = opts.tableDiv
+  }
   var tableContents = ich[templateID]({
     rows: data
   })
-  $(opts.tableDiv).html(tableContents)
+  $(tableDiv).html(tableContents)
 }
 },{"icanhaz":2}]},{},[1])
 ;

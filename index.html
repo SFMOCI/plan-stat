@@ -1,96 +1,307 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="favicon.ico">
 
-    <title>Pipeline Report Beta</title>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="favicon.ico">
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <title>Pipeline Report Beta</title>
 
-    <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+  <!-- Custom styles for this template -->
+  <link href="style.css" rel="stylesheet">
+  <link href="css/nv.d3.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
+  <!-- Just for debugging purposes. Don't actually copy this line! -->
+  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
+      <![endif]-->
+</head>
 
-  <body>
+<body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Pipeline Report</a>
-        </div>
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-          </ul>
-        </div><!--/.nav-collapse -->
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Pipeline Report</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+        </ul>
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div id="chart1" class='with-3d-shadow with-transitions'>
+        <svg></svg>
+      </div>
+    </div class="row">
+
+    <div class="row">
+      <div class="col-md-3 healthy">
+        <span class="number"></span> healthy projects
+      </div>
+      <div class="col-md-3 watch">
+        <span class="number"></span> projects on watch
+      </div>
+      <div class="col-md-3 critical">
+        <span class="number"></span> critical projects
+      </div>
+      <div class="col-md-3 very-critical">
+        <span class="number"></span> very critical projects
       </div>
     </div>
 
-    <div class="container">
+    <div class="row">
+      <h1>Projects</h1>
+        <table id="projectTable" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Project Address </th>
+                <th>Case Number</th>
+                <th>Status</th>
+                <th>Filing Date</th>
+                <th>Age (Days)</th>
+                <th>Health</th>
+                <th>Net Units</th>
+            </tr>
+        </thead>
+ 
+        <tfoot>
+            <tr>
+                <th>Project Address</th>
+                <th>Case Number</th>
+                <th>Status</th>
+                <th>Filing Date</th>
+                <th>Age (Days)</th>
+                <th>Health</th>
+                <th>Net Units</th>
+            </tr>
+        </tfoot>
+        <tbody>
+          <!-- Table content -->
 
-      <div id="barChart">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- /.container -->
 
-      </div>
 
-    </div><!-- /.container -->
-
-
-    <!-- Bootstrap core JavaScript
+  <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.3.5/tabletop.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script src="sheetsee.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-       var gData
-       var URL = "https://docs.google.com/spreadsheet/d/1SE6lH7Dgo7esHgmABy2NkRtNwSH0KjjrUdogfA7ya7g/pubhtml"
-       Tabletop.init( { key: URL, callback: showInfo, wanted: ['Q4 Pipeline Report'] } )
-      })
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.3.5/tabletop.min.js"></script>
+  <script src="js/d3.v3.js"></script>
+  <script src="js/nv.d3.js"></script>
+  <script src="js/ICanHaz.min.js"></script>
+  <script id="projectTable" type="text/html">
+    {{#rows}}
+      <tr class='{{health}}'>
+        <td>{{address}}</td>
+        <td>{{planningid}}</td>
+        <td>{{sort}}</td>
+        <td>{{firstfiled}}</td>
+        <td>{{age}}</td>
+        <td>{{health}}</td>
+        <td>{{netaddedunits}}</td>
+      </tr> 
+    {{/rows}}
+  </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var URL = "https://docs.google.com/spreadsheet/d/1SE6lH7Dgo7esHgmABy2NkRtNwSH0KjjrUdogfA7ya7g/pubhtml"
+    Tabletop.init({
+      key: URL,
+      callback: showInfo,
+      wanted: ['Q4 2013 Pipeline Report']
+    })
+  })
 
-      function showInfo(data, tabletop) {
-        data = tabletop.sheets("Q4 Pipeline Report");
-        console.log(data);
-        var barOptions = {labels: "beststat", units: "netaddedunits", m: [60, 60, 30, 150], w: 600, h: 400, div: "#barChart", xaxis: "no. of pennies", hiColor: "#FF317D"};
-        Sheetsee.d3BarChart(data, barOptions);
-        /*
-      var cali = Sheetsee.getOccurance(data, "state")
-      var colors = ['#ff00ff', '#acacac']
-      var caliData = Sheetsee.makeColorArrayOfObject(cali, colors)
-      var lineOptions = { units: "units",
-                          labels: "undefined",
-                          m: [80, 100, 120, 100],
-                          w: 800, h: 400,
-                          div: "#pennies",
-                          yaxis: "pennies",
-                          hiColor: "#E4EB29"
-                        }
-      Sheetsee.d3LineChart(caliData, lineOptions)
-      */
+  function showInfo(data, tabletop) {
+    var data = tabletop.sheets('Q4 2013 Pipeline Report').elements
+    var filter = [].concat(getMatches(data,"Large","projectsizeclass"),getMatches(data,"Medium","projectsizeclass"),getMatches(data,"Small","projectsizeclass"))
+    var statusCounts = getOccurance(filter,"sort")
+    var statusUnits = getSumByOccurance(filter,"sort","netaddedunits")
+    var chartdata = []
+    var projects = {"key": "Projects", "bar": true, "values": []}
+    var netunits = {"key": "Net Units", "values" : []}
+    
+    Object.keys(statusCounts).map(function(value, index){
+      projects['values'].push([value, statusCounts[value]])
+    })
+    
+    Object.keys(statusUnits).map(function(value, index){
+      netunits['values'].push([value, statusUnits[value]])
+    })
+
+    chartdata.push(projects)
+    chartdata.push(netunits)
+
+    chartdata.map(function(series) {
+      series.values = series.values.map(function(d) {
+        return {
+          x: d[0],
+          y: d[1]
+        }
+      });
+      console.log(series);
+      return series;
+    })
+
+    var chart;
+
+    nv.addGraph(function() {
+      chart = nv.models.linePlusBarChart()
+        .margin({
+          top: 30,
+          right: 60,
+          bottom: 50,
+          left: 70
+        })
+        .x(function(d, i) {
+          return i
+        })
+        .color(d3.scale.category10().range());
+
+      chart.xAxis.tickFormat(function(d) {
+        var dx = chartdata[0].values[d] && chartdata[0].values[d].x || 0;
+        return dx ? dx : '';
+      })
+        .showMaxMin(false);
+
+      chart.y1Axis
+        .tickFormat(d3.format(',f'));
+
+      chart.y2Axis
+        .tickFormat(d3.format(',f'));
+
+      chart.bars.forceY([0]);
+      chart.lines.forceY([0]);
+
+      d3.select('#chart1 svg')
+        .datum(chartdata)
+        .transition().duration(500).call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      chart.dispatch.on('stateChange', function(e) {
+        nv.log('New State:', JSON.stringify(e));
+      });
+
+      return chart;
+    });
+
+    var nonEntitled = getMatches(data,"0","entitlementstatus")
+    var health = getOccurance(nonEntitled,"health")
+    //Todo: replace this with function loop and icanhaz templates
+    $('.healthy span.number').html(health['Healthy'])
+    $('.watch span.number').html(health['Watch'])
+    $('.critical span.number').html(health['Critical'])
+    $('.very-critical span.number').html(health['Very Critical'])
+
+    data.lower = function () {
+          return function (text, render) {
+             //wrong line return render(text.toLowerCase());
+             return render(text).toLowerCase();
+          }
+        };
+    var table = ich.projectTable({rows : data})
+
+    $('table#projectTable tbody').append(table)
+    $('table#projectTable').dataTable()
+
+  }
+
+  function getOccurance(data, category) {
+    var occuranceCount = {}
+    for (var i = 0; i < data.length; i++) {
+      if (!occuranceCount[data[i][category]]) {
+        occuranceCount[data[i][category]] = 0
+      }
+      occuranceCount[data[i][category]]++
     }
-    </script>
-  </body>
+    return occuranceCount
+    // returns object, keys alphabetical
+  }
+
+  function getMatches(data, filter, category) {
+  var matches = []
+  data.forEach(function (element) {
+    var projectType = element[category].toString().toLowerCase()
+    if (projectType === filter.toLowerCase()) matches.push(element)
+  })
+    return matches
+  }
+
+  function getSumByOccurance(data, category, sumcolumn) {
+    var occuranceSum = {}
+    for (var i = 0; i < data.length; i++) {
+      if (!occuranceSum[data[i][category]]) {
+        occuranceSum[data[i][category]] = 0
+      }
+      occuranceSum[data[i][category]] += parseInt(data[i][sumcolumn])
+    }
+    return occuranceSum
+    // returns object, keys alphabetical
+  }
+/*
+  var testdata = [{
+    "key": "Projects",
+    "bar": true,
+    "values": [
+      ["Planning Filed", 72],
+      ["BP Filed", 84],
+      ["Planning Approved", 182],
+      ["BP Approved/Reinstated", 200],
+      ["Construction", 84]
+    ]
+  }, {
+    "key": "Net Units",
+    "values": [
+      ["Planning Filed", 3042],
+      ["BP Filed", 4002],
+      ["Planning Approved", 6003],
+      ["BP Approved/Reinstated", 2045],
+      ["Construction", 3000]
+    ]
+  }].map(function(series) {
+    console.log(series)
+    series.values = series.values.map(function(d) {
+      return {
+        x: d[0],
+        y: d[1]
+      }
+    });
+    return series;
+  });
+*/
+  
+  </script>
+</body>
+
 </html>
