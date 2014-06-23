@@ -23,6 +23,15 @@ text {
 */
 }
 
+/*
+
+Backgrounds
+Healthy - #dff0d8
+Watch - #fcf8e3
+Critical - #d6b795
+Very Critical - #f2dede
+ */
+
 .healthy .panel-body {
 	color: #3c763d;
 	/*background-color: #dff0d8;*/
@@ -41,4 +50,46 @@ text {
 .very-critical .panel-body {
 	color: #722e2d;
 	/*background-color: #c0605e;*/
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  color: white !important;
+  border: none;
+  background: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0;
+}
+
+table.dataTable.display tbody tr.healthy.odd {
+	background-color: #b2dba1;
+}
+
+table.dataTable.display tbody tr.healthy.even {
+	background-color: #dff0d8;
+}
+
+table.dataTable.display tbody tr.watch.odd {
+	background-color: #f7ecb5;
+}
+
+table.dataTable.display tbody tr.watch.even {
+	background-color: #fcf8e3;
+}
+
+table.dataTable.display tbody tr.critical.odd {
+	background-color: #ff8e68;
+}
+
+table.dataTable.display tbody tr.critical.even {
+	background-color: #ffb49b;
+}
+
+table.dataTable.display tbody tr.very-critical.odd {
+	background-color: #dca7a7;
+}
+
+table.dataTable.display tbody tr.very-critical.even {
+	background-color: #f2dede;
 }
