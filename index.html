@@ -289,7 +289,7 @@
         false
       )
     }
-    $('#projectTable').DataTable().draw();
+    $('#projectTable').DataTable().order([[6,'desc']]).draw();
   }
 
   function getOccurance(data, category, order) {
