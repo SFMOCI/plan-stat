@@ -22,3 +22,23 @@ text {
   of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
 */
 }
+
+.healthy .panel-body {
+	color: #3c763d;
+	/*background-color: #dff0d8;*/
+}
+
+.watch .panel-body {
+	color: #8a6d3b;
+	/*background-color: #fcf8e3;*/
+}
+
+.critical .panel-body {
+	color: #a94442;
+	/*background-color: #f2dede;*/
+}
+
+.very-critical .panel-body {
+	color: #722e2d;
+	/*background-color: #c0605e;*/
+}

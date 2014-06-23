@@ -57,18 +57,34 @@
       </div>
     </div class="row">
 
-    <div class="row">
+    <div class="row health-status">
       <div class="col-md-3 healthy">
-        <span class="number"></span> healthy projects
+        <div class="panel panel-default" data-filter="Healthy">
+          <div class="panel-body">
+          <h1><span class="number"></span><br/><small>healthy projects</small></h1>
+          </div>
+        </div>
       </div>
       <div class="col-md-3 watch">
-        <span class="number"></span> projects on watch
+        <div class="panel panel-default" data-filter="Watch">
+          <div class="panel-body">
+          <h1><span class="number"></span><br/><small>projects on watch</small></h1>
+          </div>
+        </div>
       </div>
       <div class="col-md-3 critical">
-        <span class="number"></span> critical projects
+        <div class="panel panel-default" data-filter="Critical">
+          <div class="panel-body">
+           <h1><span class="number"></span><br/><small>critical projects</small></h1>
+          </div>
+        </div>
       </div>
       <div class="col-md-3 very-critical">
-        <span class="number"></span> very critical projects
+        <div class="panel panel-default" data-filter="Very Critical">
+          <div class="panel-body">
+           <h1><span class="number"></span><br/><small>very critical projects</small></h1>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -84,6 +100,7 @@
                 <th>Age (Days)</th>
                 <th>Health</th>
                 <th>Net Units</th>
+                <th>Entitled Status</th>
             </tr>
         </thead>
  
@@ -96,6 +113,7 @@
                 <th>Age (Days)</th>
                 <th>Health</th>
                 <th>Net Units</th>
+                <th>Entitled Status</th>
             </tr>
         </tfoot>
         <tbody>
@@ -121,14 +139,15 @@
   <script src="js/ICanHaz.min.js"></script>
   <script id="projectTable" type="text/html">
     {{#rows}}
-      <tr class='{{health}}'>
+      <tr class='{{classes}}'>
         <td>{{address}}</td>
-        <td>{{planningid}}</td>
+        <td><a href='http://propertymap.sfplanning.org/?&search={{planningid}}' target='_blank'>{{planningid}}</a></td>
         <td>{{sort}}</td>
         <td>{{firstfiled}}</td>
         <td>{{age}}</td>
         <td>{{health}}</td>
         <td>{{netaddedunits}}</td>
+        <td>{{entitlementstatus}}</td>
       </tr> 
     {{/rows}}
   </script>
@@ -144,9 +163,10 @@
 
   function showInfo(data, tabletop) {
     var data = tabletop.sheets('Q4 2013 Pipeline Report').elements
+    var order = ['Planning Filed','PL Approved','BP Filed','BP Approved/Issued/Re-Instated','Construction']
     var filter = [].concat(getMatches(data,"Large","projectsizeclass"),getMatches(data,"Medium","projectsizeclass"),getMatches(data,"Small","projectsizeclass"))
-    var statusCounts = getOccurance(filter,"sort")
-    var statusUnits = getSumByOccurance(filter,"sort","netaddedunits")
+    var statusCounts = getOccurance(filter,"sort",order)
+    var statusUnits = getOccurance(filter,["sort","netaddedunits"],order)
     var chartdata = []
     var projects = {"key": "Projects", "bar": true, "values": []}
     var netunits = {"key": "Net Units", "values" : []}
@@ -224,28 +244,53 @@
     $('.critical span.number').html(health['Critical'])
     $('.very-critical span.number').html(health['Very Critical'])
 
-    data.lower = function () {
-          return function (text, render) {
-             //wrong line return render(text.toLowerCase());
-             return render(text).toLowerCase();
-          }
-        };
     var table = ich.projectTable({rows : data})
 
     $('table#projectTable tbody').append(table)
-    $('table#projectTable').dataTable()
+    $('table#projectTable').dataTable({
+      "columnDefs": [
+        { "visible": false, "targets": 7 }
+      ]
+    })
+
+    $('.health-status .panel').on('click', function () {
+        console.log("/^" + $(this).attr('data-filter') + "$/")
+        filterColumn( 5,"^\\s*"+$(this).attr('data-filter')+"\\s*$");
+    } );
 
   }
 
-  function getOccurance(data, category) {
-    var occuranceCount = {}
-    for (var i = 0; i < data.length; i++) {
-      if (!occuranceCount[data[i][category]]) {
-        occuranceCount[data[i][category]] = 0
+  function filterColumn (i,term) {
+    $('#projectTable').DataTable().column(i).search(
+        term,
+        true,
+        false
+    );
+    $('#projectTable').DataTable().column(7).search(
+        0,
+        false,
+        false
+    ).draw();
+  }
+
+  function getOccurance(data, category, order) {
+    var occurance = {}
+    //swap out with check for array
+    var cat = typeof(category) == "object" ? category[0] : category
+    var sumBy = typeof(category) == "object" ? category[1] : false
+
+    if(order) {
+      for(var i = 0; i < order.length; i++) {
+        occurance[order[i]] = 0
       }
-      occuranceCount[data[i][category]]++
     }
-    return occuranceCount
+    for (var i = 0; i < data.length; i++) {
+      if (!occurance[data[i][cat]]) {
+        occurance[data[i][cat]] = 0
+      }
+      occurance[data[i][cat]] += sumBy ? parseInt(data[i][sumBy]) : 1
+    }
+    return occurance
     // returns object, keys alphabetical
   }
 
@@ -258,17 +303,6 @@
     return matches
   }
 
-  function getSumByOccurance(data, category, sumcolumn) {
-    var occuranceSum = {}
-    for (var i = 0; i < data.length; i++) {
-      if (!occuranceSum[data[i][category]]) {
-        occuranceSum[data[i][category]] = 0
-      }
-      occuranceSum[data[i][category]] += parseInt(data[i][sumcolumn])
-    }
-    return occuranceSum
-    // returns object, keys alphabetical
-  }
 /*
   var testdata = [{
     "key": "Projects",
