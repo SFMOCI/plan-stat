@@ -31,6 +31,7 @@
 </head>
 
 <body>
+  <div class="loader"></div>
 
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -169,6 +170,7 @@
   })
 
   function showInfo(data, tabletop) {
+    $(".loader").fadeOut("slow");
     var data = tabletop.sheets('Q4 2013 Pipeline Report').elements
     var order = ['Planning Filed','PL Approved','BP Filed','BP Approved/Issued/Re-Instated','Construction']
     var filter = [].concat(getMatches(data,"Large","projectsizeclass"),getMatches(data,"Medium","projectsizeclass"),getMatches(data,"Small","projectsizeclass"))
