@@ -58,12 +58,14 @@
       This application is for demo purposes only, the data in here are not reflective of the most recent SF Planning data
     </div>
     <div class="row">
+      <h1>Pipeline Overview</h1>
       <div id="chart1" class='with-3d-shadow with-transitions'>
         <svg></svg>
       </div>
     </div class="row">
 
     <div class="row health-status">
+      <h1>Non-entitled Project Status</h1>
       <div class="col-md-3 healthy">
         <div class="panel panel-default" data-filter="Healthy">
           <div class="panel-body">
@@ -96,7 +98,7 @@
 
     <div class="row">
       <div class="col-md-12">
-      <h1>Projects</h1>
+      <h1>Pipeline Project Report</h1>
         <table id="projectTable" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -170,6 +172,9 @@
   })
 
   function showInfo(data, tabletop) {
+    data['field1']
+
+
     $(".loader").fadeOut("slow");
     var data = tabletop.sheets('Q4 2013 Pipeline Report').elements
     var order = ['Planning Filed','PL Approved','BP Filed','BP Approved/Issued/Re-Instated','Construction']
@@ -198,7 +203,6 @@
           y: d[1]
         }
       });
-      console.log(series);
       return series;
     })
 
